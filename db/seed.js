@@ -43,12 +43,17 @@ const seed = ({ shopData, treasureData }) => {
       return db.query(queryStr);
     })
     .then((data) => {
-      const Treasures = formatTreasures(data,treasureData)
-      const formattedTreasures = Treasures.map((treasureData)=>{
-        return [treasureData.treasure_name, treasureData.colour, treasureData.age, treasureData.cost_at_auction, treasureData.shop_id]
+      const Treasures = formatTreasures(data, treasureData);
+      const formattedTreasures = Treasures.map((treasureData) => {
+        return [
+          treasureData.treasure_name,
+          treasureData.colour,
+          treasureData.age,
+          treasureData.cost_at_auction,
+          treasureData.shop_id,
+        ];
       });
 
-      
       // ----- formatTreasures(data,formattedtreasure)
       const queryStr = format(
         `
@@ -62,9 +67,6 @@ const seed = ({ shopData, treasureData }) => {
         formattedTreasures
       );
       return db.query(queryStr);
-    })
-    .then((data) => {
-      console.log(data.rows);
     });
   // then: create some new tables - but which first and why?
   // then: insert the raw data into the tables.
