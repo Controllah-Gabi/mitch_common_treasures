@@ -1,6 +1,7 @@
 const db = require("./");
 
 const format = require("pg-format");
+const { formatTreasures } = require("./dataFunc");
 
 const seed = ({ shopData, treasureData }) => {
   return db
@@ -23,8 +24,7 @@ const seed = ({ shopData, treasureData }) => {
         colour TEXT,
         age INT,
         cost_at_auction FLOAT,
-		shop TEXT,
-        treasureShop_id INT REFERENCES shops(shop_id)
+        shop_id INT REFERENCES shops(shop_id)
         );`);
     })
     .then(() => {
@@ -42,23 +42,21 @@ const seed = ({ shopData, treasureData }) => {
       );
       return db.query(queryStr);
     })
-    .then(() => {
-      const formattedTreasures = treasureData.map((treasure) => {
-        return [
-          treasure.treasure_name,
-          treasure.colour,
-          treasure.age,
-          treasure.cost_at_auction,
-          treasure.shop,
-        ];
+    .then((data) => {
+      const Treasures = formatTreasures(data,treasureData)
+      const formattedTreasures = Treasures.map((treasureData)=>{
+        return [treasureData.treasure_name, treasureData.colour, treasureData.age, treasureData.cost_at_auction, treasureData.shop_id]
       });
+
+      
+      // ----- formatTreasures(data,formattedtreasure)
       const queryStr = format(
         `
 		INSERT INTO treasures (treasure_name,
 		colour,
 		age,
 		cost_at_auction,
-		shop)
+    shop_id)
 		VALUES %L
 		RETURNING *;`,
         formattedTreasures
