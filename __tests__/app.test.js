@@ -60,30 +60,37 @@ test("status: 404, spelling mistake", () => {
     .get("/api/treasure")
     .expect(404)
     .then(({ body }) => {
-      expect(body.msg).toBe("Route not found")}
-    )}
-)
- describe("/api/treasure?sort_by=cost_at_auction",()=>{
-  test("Get: 200 - can sort array be given query",()=>{
+      expect(body.msg).toBe("Route not found");
+    });
+});
+describe("/api/treasure?sort_by=cost_at_auction", () => {
+  test("Get: 200 - can sort array be given query", () => {
     return request(app)
-    .get('/api/treasures?sort_by=cost_at_auction')
-     .expect(200)
-    .then(({body})=>{
-       expect(body.treasures).toBeSortedBy('cost_at_auction');
-     })
- })
-  })
-
-  describe("/api/treasure?order=desc",()=>{
-    test.only("Get: 200 - can sort array be given order",()=>{
-      return request(app)
-      .get('/api/treasures?order=desc')
+      .get("/api/treasures?sort_by=cost_at_auction")
       .expect(200)
-      .then(({body})=>{
-        console.log(body.treasures)
-        expect(body.treasures).toBeSortedBy('age', {descending: true});
-      })
-      
-    })
-  })
-    
+      .then(({ body }) => {
+        expect(body.treasures).toBeSortedBy("cost_at_auction");
+      });
+  });
+});
+
+describe("/api/treasure?order=desc", () => {
+  test("Get: 200 - can sort array be given order", () => {
+    return request(app)
+      .get("/api/treasures?order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.treasures).toBeSortedBy("age", { descending: true });
+      });
+  });
+  test.only("Get: 200 - can sort array in given order and given column", () => {
+    return request(app)
+      .get("/api/treasures?sort_by=cost_at_auction&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.treasures).toBeSortedBy("cost_at_auction", {
+          descending: true,
+        });
+      });
+  });
+});
