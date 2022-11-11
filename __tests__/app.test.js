@@ -83,7 +83,7 @@ describe("/api/treasure?order=desc", () => {
         expect(body.treasures).toBeSortedBy("age", { descending: true });
       });
   });
-  test.only("Get: 200 - can sort array in given order and given column", () => {
+  test("Get: 200 - can sort array in given order and given column", () => {
     return request(app)
       .get("/api/treasures?sort_by=cost_at_auction&order=desc")
       .expect(200)
@@ -94,3 +94,16 @@ describe("/api/treasure?order=desc", () => {
       });
   });
 });
+
+describe("/api/treasures?colour=gold",()=>{
+  test.only("Get: 200 - can get all treasure with colour gold",()=>{
+    return request(app)
+    .get("/api/treasures?colour=gold")
+    .expect(200)
+    .then(({body})=>{
+      body.treasures.forEach((body)=>{
+        expect(body.colour).toBe("gold")
+      })
+    })
+  })
+})
