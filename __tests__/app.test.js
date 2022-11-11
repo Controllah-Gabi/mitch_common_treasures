@@ -73,5 +73,18 @@ test("status: 404, spelling mistake", () => {
      })
  })
   })
+
+  describe("/api/treasure?order=desc",()=>{
+    test.only("Get: 200 - can sort array be given order",()=>{
+      return request(app)
+      .get('/api/treasures?order=desc')
+      .expect(200)
+      .then(({body})=>{
+        console.log(body.treasures)
+        expect(body.treasures).toBeSortedBy('age', {descending: true});
+      })
+      
+    })
+  })
    
     

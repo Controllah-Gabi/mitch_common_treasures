@@ -1,6 +1,7 @@
 const db = require("./db");
 
 exports.selectTreasures = (sort_by = 'age') => {
+  console.log(sort_by)
   const validColumns = ['age','cost_at_auction','treasure_name']
   if (!validColumns.includes(sort_by)){
     return Promise.reject({status: 400, msg: 'invalid sort query'})
