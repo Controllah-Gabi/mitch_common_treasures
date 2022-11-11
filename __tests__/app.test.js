@@ -54,3 +54,24 @@ describe("GET /api/treasures", () => {
       });
   });
 });
+
+test("status: 404, spelling mistake", () => {
+  return request(app)
+    .get("/api/treasure")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Route not found")}
+    )}
+)
+ describe("/api/treasure?sort_by=cost_at_auction",()=>{
+  test("Get: 200 - can sort array be given query",()=>{
+    return request(app)
+    .get('/api/treasures?sort_by=cost_at_auction')
+     .expect(200)
+    .then(({body})=>{
+       expect(body.treasures).toBeSortedBy('cost_at_auction');
+     })
+ })
+  })
+   
+    

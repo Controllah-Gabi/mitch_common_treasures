@@ -1,7 +1,9 @@
 const { selectTreasures } = require("./model");
 
 exports.getTreasures = (req, res) => {
-  selectTreasures().then((treasures) => {
+  const {sort_by} = req.query;
+  selectTreasures(sort_by).then((treasures) => {
     res.status(200).send({ treasures });
   });
 };
+
