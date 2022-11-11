@@ -1,4 +1,4 @@
-const { selectTreasures, insertTreasure } = require("./model");
+const { selectTreasures, insertTreasure, selectTreasuresByID } = require("./model");
 
 exports.getTreasures = (req, res, next) => {
   const { sort_by } = req.query;
@@ -16,5 +16,14 @@ exports.postTreasures = (req, res, next) => {
   const body = req.body;
   insertTreasure(body).then((treasures) => {
     res.status(201).send({ treasures });
+  }).catch((err)=>{
+    console.log(err.code)
+    next(err);
   });
 };
+
+exports.getTreasuresByID = (req,res,next) =>{
+  selectTreasuresByID(req.params.treasure_id).then((data)=>{
+    res.status(200).send(data)
+  })
+}

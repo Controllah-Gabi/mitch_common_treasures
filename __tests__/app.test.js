@@ -18,6 +18,7 @@ describe("GET /api/treasures", () => {
       .then(({ body }) => {
         const { treasures } = body;
         expect(treasures).toBeInstanceOf(Array);
+        
         treasures.forEach((treasure) => {
           expect(treasure).toEqual(
             expect.objectContaining({
@@ -125,7 +126,7 @@ describe("/api/treasure?sort_by=cost_at_auction", () => {
 });
 
 describe("/api/treasures", () => {
-  test.only("POST 201 - adds treasure to table", () => {
+  test("POST 201 - adds treasure to table", () => {
     const newTreasure = {
       treasure_name: "France",
       colour: "Midnight",
@@ -151,4 +152,39 @@ describe("/api/treasures", () => {
         );
       });
   });
+  test("POST 201 - adds treasure to table", () => {
+    const newTreasure = {
+      treasure_name: "France",
+      colour: "Midnight",
+      age: '99s',
+      cost_at_auction: "12.99",
+      shop_id: 2,
+    };
+    return request(app)
+      .post("/api/treasures")
+      .send(newTreasure)
+      .expect(400)
+      .then(({ body }) => {      
+        expect(body.msg).toBe(
+          "Invalid data type");
+      });
+    })
+    test.only("POST 201 - adds treasure to table", () => {
+      return request(app)
+        .get("/api/treasures/1")
+        .expect(200)
+        .then(({ body }) => {      
+          expect({body}).toEqual({
+            treasure_id: 19,
+            treasure_name: 'treasure-q',
+            colour: 'magenta',
+            age: 1,
+            cost_at_auction: 60.99,
+            shop_name: 'shop-a'
+          }
+            );
+        });
+      })
 });
+
+

@@ -43,5 +43,12 @@ exports.insertTreasure = (body) => {
     )
     .then((data) => {
       return data.rows[0];
-    });
+    })
 };
+
+
+exports.selectTreasuresByID = (params)=>{
+  return db.query("SELECT * FROM treasures WHERE treasure_id = $1",[params]).then((data)=>{
+    return data.rows[0];
+  })
+}
