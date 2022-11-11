@@ -72,38 +72,83 @@ describe("/api/treasure?sort_by=cost_at_auction", () => {
         expect(body.treasures).toBeSortedBy("cost_at_auction");
       });
   });
-});
-
-describe("/api/treasure?order=desc", () => {
-  test("Get: 200 - can sort array be given order", () => {
+  test("Get: 200 - can sort array by treasure_name", () => {
     return request(app)
-      .get("/api/treasures?order=desc")
+      .get("/api/treasures?sort_by=treasure_name")
       .expect(200)
       .then(({ body }) => {
-        expect(body.treasures).toBeSortedBy("age", { descending: true });
+        expect(body.treasures).toBeSortedBy("treasure_name");
       });
   });
-  test("Get: 200 - can sort array in given order and given column", () => {
+  test("Get: 400 - invalid query column", () => {
     return request(app)
-      .get("/api/treasures?sort_by=cost_at_auction&order=desc")
-      .expect(200)
+      .get("/api/treasures?sort_by=cost_at_action")
+      .expect(400)
       .then(({ body }) => {
-        expect(body.treasures).toBeSortedBy("cost_at_auction", {
-          descending: true,
+        expect(body.msg).toBe("invalid sort query");
+      });
+  });
+
+  describe("/api/treasure?order=desc", () => {
+    test("Get: 200 - can sort array be given order", () => {
+      return request(app)
+        .get("/api/treasures?order=desc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.treasures).toBeSortedBy("age", { descending: true });
         });
-      });
+    });
+    test("Get: 200 - can sort array in given order and given column", () => {
+      return request(app)
+        .get("/api/treasures?sort_by=cost_at_auction&order=desc")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.treasures).toBeSortedBy("cost_at_auction", {
+            descending: true,
+          });
+        });
+    });
+  });
+
+  describe("/api/treasures?colour=gold", () => {
+    test("Get: 200 - can get all treasure with colour gold", () => {
+      return request(app)
+        .get("/api/treasures?colour=gold")
+        .expect(200)
+        .then(({ body }) => {
+          body.treasures.forEach((body) => {
+            expect(body.colour).toBe("gold");
+          });
+        });
+    });
   });
 });
 
-describe("/api/treasures?colour=gold",()=>{
-  test.only("Get: 200 - can get all treasure with colour gold",()=>{
+describe("/api/treasures", () => {
+  test.only("POST 201 - adds treasure to table", () => {
+    const newTreasure = {
+      treasure_name: "France",
+      colour: "Midnight",
+      age: 99,
+      cost_at_auction: "12.99",
+      shop_id: 2,
+    };
     return request(app)
-    .get("/api/treasures?colour=gold")
-    .expect(200)
-    .then(({body})=>{
-      body.treasures.forEach((body)=>{
-        expect(body.colour).toBe("gold")
-      })
-    })
-  })
-})
+      .post("/api/treasures")
+      .send(newTreasure)
+      .expect(201)
+      .then(({ body }) => {
+        const { treasures } = body;
+        expect(treasures).toEqual(
+          expect.objectContaining({
+            treasure_id: expect.any(Number),
+            treasure_name: expect.any(String),
+            colour: expect.any(String),
+            age: expect.any(Number),
+            cost_at_auction: expect.any(Number),
+            shop_id: expect.any(Number),
+          })
+        );
+      });
+  });
+});
